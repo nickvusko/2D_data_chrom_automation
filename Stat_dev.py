@@ -30,3 +30,7 @@ def main():
         final_table.to_csv("ratio_"+fh+".txt", sep="\t")
         print("DONE, PLEASE CHECK YOUR RESULTS")
 
+
+main()
+
+

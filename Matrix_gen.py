@@ -35,7 +35,7 @@ def get_matrix_height(start_table_height, list_of_renames):
             result = array.reshape(-1, 1)/array2
             df_matrix = pd.DataFrame(result)
             df_matrix = df_matrix.fillna("0")
-            df_matrix.to_csv("results/height/height_matrix_"+column_name, sep="\t")
+            df_matrix.to_csv("results/height/height_matrix_"+column_name+".txt", sep="\t")
             df_matrix = df_matrix.where(np.triu(np.ones(df_matrix.shape), k=0).astype(np.bool))
             df_matrix = pd.DataFrame(df_matrix.stack().to_frame().values).T
             df_matrixx = df_matrix.rename(index={0: column_name})
@@ -55,7 +55,7 @@ def get_matrix_area(start_table_area, list_of_renames):
             result = array.reshape(-1, 1)/array2
             df_matrix = pd.DataFrame(result)
             df_matrix = df_matrix.fillna("0")
-            df_matrix.to_csv("results/area/area_matrix_"+column_name, sep = "\t")
+            df_matrix.to_csv("results/area/area_matrix_"+column_name+".txt", sep = "\t")
             df_matrix = df_matrix.where(np.triu(np.ones(df_matrix.shape), k=0).astype(np.bool))
             df_matrix = pd.DataFrame(df_matrix.stack().to_frame().values).T
             df_matrixx = df_matrix.rename(index={0: column_name})
@@ -70,7 +70,7 @@ def main():
     # get input from the user#
     a = ((input("Enter the name of file for area matrix: ")) + ".txt")
     h = ((input("Enter the name of file for height matrix: ")) + ".txt")
-    if a != "" and h != "":
+    if a != ".txt" and h != ".txt":
         start_table_height = pd.read_csv(h, sep="\t", header=0, index_col=0)
         start_table_area = pd.read_csv(a, sep="\t", header=0, index_col=0)
 
@@ -80,7 +80,7 @@ def main():
         print("Creating matrices for areas and heights")
         get_matrix_height(start_table_height, list_of_renames)
         get_matrix_area(start_table_area, list_of_renames)
-    elif a != "" and h == "":
+    elif a != ".txt" and h == ".txt":
         start_table_area = pd.read_csv(a, sep="\t", header=0, index_col=0)
 
         print("Getting column names...")
@@ -88,7 +88,7 @@ def main():
 
         print("Creating matrix for areas only")
         get_matrix_area(start_table_area, list_of_renames)
-    elif a == "" and h != "":
+    elif a == ".txt" and h != ".txt":
         start_table_height = pd.read_csv(a, sep="\t", header=0, index_col=0)
 
         print("Getting column names...")
