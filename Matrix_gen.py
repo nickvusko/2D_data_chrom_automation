@@ -17,7 +17,7 @@ def get_column_names(start_table_area):
         list_of_compounds.append(compound)
     count = 0
     for element in list_of_compounds:
-        for ilimint in range(count,len(list_of_compounds)):
+        for ilimint in range(count, len(list_of_compounds)):
             rename = list_of_compounds[count]+"/"+list_of_compounds[ilimint]
             list_of_renames.append(rename)  
         count = count+1
@@ -51,7 +51,7 @@ def get_matrix_area(start_table_area, list_of_renames):
         column_x = column[1]
         array = np.column_stack(column_x)
         array2 = array
-        with np.errstate(divide = "ignore", invalid = "ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = array.reshape(-1, 1)/array2
             df_matrix = pd.DataFrame(result)
             df_matrix = df_matrix.fillna("0")
