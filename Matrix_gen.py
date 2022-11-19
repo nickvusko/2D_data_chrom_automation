@@ -35,7 +35,7 @@ def get_matrix_height(start_table_height, list_of_renames):
             result = array.reshape(-1, 1)/array2
             df_matrix = pd.DataFrame(result)
             df_matrix = df_matrix.fillna("0")
-            df_matrix.to_csv("results/height/height_matrix_"+column_name+".txt", sep="\t")
+            df_matrix.to_csv("results/height/height_matrix_"+column_name, sep="\t")
             df_matrix = df_matrix.where(np.triu(np.ones(df_matrix.shape), k=0).astype(np.bool))
             df_matrix = pd.DataFrame(df_matrix.stack().to_frame().values).T
             df_matrixx = df_matrix.rename(index={0: column_name})
@@ -47,7 +47,7 @@ def get_matrix_height(start_table_height, list_of_renames):
 def get_matrix_area(start_table_area, list_of_renames):
     final_table_area = pd.DataFrame()
     for column in start_table_area.iteritems():
-        column_name = column[0]
+        column_name = column[0].split("\\")[-1]
         column_x = column[1]
         array = np.column_stack(column_x)
         array2 = array
@@ -55,7 +55,7 @@ def get_matrix_area(start_table_area, list_of_renames):
             result = array.reshape(-1, 1)/array2
             df_matrix = pd.DataFrame(result)
             df_matrix = df_matrix.fillna("0")
-            df_matrix.to_csv("results/area/area_matrix_"+column_name+".txt", sep = "\t")
+            df_matrix.to_csv("results/area/area_matrix_"+column_name, sep="\t")
             df_matrix = df_matrix.where(np.triu(np.ones(df_matrix.shape), k=0).astype(np.bool))
             df_matrix = pd.DataFrame(df_matrix.stack().to_frame().values).T
             df_matrixx = df_matrix.rename(index={0: column_name})

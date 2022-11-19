@@ -2,7 +2,7 @@
 # Author:  NIKOLA LADISLAVOVA, nikola.ladislavova@gmail.com
 # Created: Feb 25, 2021
 # Purpose: Chromatography
-
+import numpy as np
 import pandas as pd
 
 
@@ -63,8 +63,8 @@ def main():
     final_table = pd.DataFrame(columns=list_of_names)
     for f in list_of_files_define:
         fh = pd.read_csv(f, header=0, sep="\t", index_col=0)
+        fh = fh.replace(np.inf, 0)
         final_table = pd.concat([final_table, fh])
-
     if len(list_of_files_anal) != 0:
         final_table = fill_in_analized(final_table, list_of_files_anal)
 
