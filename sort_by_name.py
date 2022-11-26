@@ -10,9 +10,9 @@ import glob
 
 # get files and create a table
 def get_files():
-    """returns listr files for the analysis"""
+    """returns list of files for the analysis"""
     list_of_files_all = []
-    for file in glob.iglob("*.txt"):
+    for file in glob.iglob("strely\\*.txt"):
         if file == "area.txt":
             continue
         if file == "height.txt":
@@ -27,15 +27,19 @@ def get_names_compounds(list_of_files_all: list) -> list:
     """get names of all compounds in analysed chromatograms and create index list"""
     index_lst = []
     for f in list_of_files_all:
-        fh = open(f, encoding="utf8")
-        for row in fh:
-            if row.startswith("MX"):
-                rowx = row.strip()
-                rowy = rowx.split("\t")[0]
-                if rowy in index_lst or rowy == "Name" or rowy == "":
-                    continue
-                else:
-                    index_lst.append(rowy)
+        # fh = open(f, encoding="utf8")
+        # for row in fh:
+        #     if row.startswith("MX"):
+        #         rowx = row.strip()
+        #         rowy = rowx.split("\t")[0]
+        #         if rowy in index_lst or rowy == "Name" or rowy == "":
+        #             continue
+        #         else:
+        #             index_lst.append(rowy)
+        df = pd.read_csv(f, sep="\t", header = 0, index_col=0)
+        for name in df.index:
+            if name not in index_lst:
+                index_lst.append(name)
     return index_lst
 
 
@@ -61,8 +65,8 @@ def get_concat_tables(list_of_files_all: list, index_lst: list) -> None:
         except KeyError:
             print("Height column has not been found")
             pass
-    df_area_all.fillna(0).to_csv("area.txt", sep="\t")
-    df_height_all.fillna(0).to_csv("height.txt", sep="\t")
+    df_area_all.fillna(0).to_csv("strely\\area.txt", sep="\t")
+    df_height_all.fillna(0).to_csv("strely\\height.txt", sep="\t")
 
 
 def main():

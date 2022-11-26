@@ -5,12 +5,14 @@
 
 
 import pandas as pd
+import numpy as np
 import sys
 
 
 def main():
     fh = str((input("Enter the name of the file: ")))
     df_stat = pd.read_csv(fh+".txt", index_col=0, header=0, sep="\t")
+    df_stat = df_stat.replace(np.inf, 0)
     if len(df_stat.index) == 1:
         colm_order = df_stat.sort_values
         colm_order = colm_order.replace(1, 0)
