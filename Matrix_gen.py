@@ -72,9 +72,13 @@ def main():
     h = ((input("Enter the name of file for height matrix: ")) + ".txt")
     if a != ".txt" and h != ".txt":
         start_table_height = pd.read_csv(h, sep="\t", header=0, index_col=0)
-        start_table_height = start_table_height.sort_index(axis=1)
+        # start_table_height = start_table_height.sort_index(axis=1)
+        # This option should be set active only when the user is
+        # sure that compounds with the same name have always the same elution order
         start_table_area = pd.read_csv(a, sep="\t", header=0, index_col=0)
-        start_table_area = start_table_area.sort_index(axis=1)
+        # start_table_area = start_table_area.sort_index(axis=1)
+        # This option should be set active only when the user is
+        # sure that compounds with the same name have always the same elution order
 
         print("Getting column names...")
         list_of_renames = get_column_names(start_table_area)
@@ -84,8 +88,9 @@ def main():
         get_matrix_area(start_table_area, list_of_renames)
     elif a != ".txt" and h == ".txt":
         start_table_area = pd.read_csv(a, sep="\t", header=0, index_col=0)
-        start_table_area = start_table_area.sort_index(axis=1)
-
+        # start_table_area = start_table_area.sort_index(axis=1)
+        # This option should be set active only when the user is
+        # sure that compounds with the same name have always the same elution order
         print("Getting column names...")
         list_of_renames = get_column_names(start_table_area)
 
@@ -93,7 +98,9 @@ def main():
         get_matrix_area(start_table_area, list_of_renames)
     elif a == ".txt" and h != ".txt":
         start_table_height = pd.read_csv(a, sep="\t", header=0, index_col=0)
-        start_table_height = start_table_height.sort_index(axis=1)
+        # start_table_height = start_table_height.sort_index(axis=1)
+        # This option should be set active only when the user is
+        # sure that compounds with the same name have always the same elution order
 
         print("Getting column names...")
         list_of_renames = get_column_names(start_table_height)
