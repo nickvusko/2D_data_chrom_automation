@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from scipy import stats
 from datetime import date
 from numpy import dot
@@ -11,22 +10,22 @@ from warnings import filterwarnings
 filterwarnings("ignore")
 
 
-class KPL_update():
-    def __init__(self, central_KPL="database_compounds.txt", to_compare="database_compounds.txt",
+class KPLUpdate:
+    def __init__(self, central_kpl="database_compounds.txt", to_compare="database_compounds.txt",
                  to_rename_folder="to_rename", sim_compare="DOT", spectra_transform=(0.53, 1.3)):
-        self.central_KPL = pd.read_csv(f"{central_KPL}", sep="\t", header=0, index_col=0)
-        self.central_KPL_name = central_KPL
+        self.central_kpl = pd.read_csv(f"{central_kpl}", sep="\t", header=0, index_col=0)
+        self.central_kpl_name = central_kpl
         self.to_compare = pd.read_csv(f"{to_compare}", sep="\t", header=0)
         self.to_compare_name = to_compare
         self.to_rename_folder = to_rename_folder
-        self.Similarity = sim_compare
+        self.sim_compare = sim_compare
         self.Transformation = spectra_transform
-        self.central_KPL.to_csv(f"{self.central_KPL}_{date.today()}.txt", sep="\t")
+        self.central_kpl.to_csv(f"{self.central_kpl_name}_{date.today()}.txt", sep="\t")
         self.to_compare.set_index("Name").to_csv(f"{self.to_compare}_{date.today()}.txt", sep="\t")
         assert self.sim_compare in ["Pearson, DOT"], "Choose the proper similarity method: Pearson or DOT"
         assert type(spectra_transform) == tuple, "spectra_transform should be a tuple"
 
-    def compare_KPLs(self):
+    def compare_kpls(self):
         rename_dict = dict()
         for row in self.to_compare.index:
             row_spectra = self.to_compare.at[row, "Spectrum"].split(" ")
@@ -42,10 +41,10 @@ class KPL_update():
             upper_band_1st = float(self.to_compare.at[row, "1st Dimension Time (s)"] + 28)
             lower_band_2nd = float(self.to_compare.at[row, "2nd Dimension Time (s)"] - 0.7)
             upper_band_2nd = float(self.to_compare.at[row, "2nd Dimension Time (s)"] + 0.7)
-            database_foc = self.central_KPL[(lower_band_1st < self.central_KPL["1st Dimension Time (s)"]) & (
-                        self.central_KPL["1st Dimension Time (s)"] <= upper_band_1st)]
-            database_foc = self.central_KPL[(lower_band_2nd < self.central_KPL["2nd Dimension Time (s)"]) & (
-                        self.central_KPL["2nd Dimension Time (s)"] <= upper_band_2nd)]
+            database_foc = self.central_kpl[(lower_band_1st < self.central_kpl["1st Dimension Time (s)"]) & (
+                    self.central_kpl["1st Dimension Time (s)"] <= upper_band_1st)]
+            database_foc = database_foc[(lower_band_2nd < self.central_kpl["2nd Dimension Time (s)"]) & (
+                    self.central_kpl["2nd Dimension Time (s)"] <= upper_band_2nd)]
             found = False
             if len(database_foc) > 0:
                 for idx in database_foc.index:
@@ -54,25 +53,25 @@ class KPL_update():
                         found = True
                         rename_dict[self.to_compare.at[row, "Name"]] = idx
                         self.to_compare.at[row, "Name"] = idx
-                        found = True
-            if found == False:
-                oldname = int(self.central_KPL.index[-1].split("X")[1])
+            if not found:
+                oldname = int(self.central_kpl.index[-1].split("X")[1])
                 newname = "MX" + str(int(oldname) + 1).zfill(5)
                 samplecompounddf = pd.DataFrame(self.to_compare.iloc[row, :]).transpose()
                 samplecompounddf["Name"] = newname
                 samplecompounddf = samplecompounddf.set_index("Name")
-                self.central_KPL = pd.concat([self.central_KPL, samplecompounddf])
-                self.central_KPL.at[self.central_KPL.index[-1], "Checked"] = "False"
+                self.central_kpl = pd.concat([self.central_kpl, samplecompounddf])
+                self.central_kpl.at[self.central_kpl.index[-1], "Checked"] = "False"
         self.to_compare = self.to_compare.set_index("Name")
         self.to_compare.to_csv(f"{self.to_compare_name}", sep="\t")
-        self.central_KPL = self.central_KPL.set_index("Name")
-        self.central_KPL.to_csv(f"{self.central_KPL_name}", sep="\t")
+        self.central_kpl = self.central_kpl.set_index("Name")
+        self.central_kpl.to_csv(f"{self.central_kpl_name}", sep="\t")
 
         return rename_dict
 
     def compare_spectra(self, spectrum1: dict, spectrum2: list) -> float:
         """
-        Compares spectra of two peaks. Note that the spectra must be in basic ChromaTOF format mass:intensity separated by a blank space
+        Compares spectra of two peaks. Note that the spectra must be in basic ChromaTOF format mass:intensity
+        separated by a blank space.
 
         Parameters
         ----------
@@ -97,18 +96,21 @@ class KPL_update():
                 samplemasses_compare.update({key: value})
             else:
                 continue
-        spectrum_table_spectra = pd.DataFrame.from_dict([spectrum1, samplemasses_compare]).fillna(0)
+        spectrum_table_spectra = pd.DataFrame.from_dict({'spectrum1': spectrum1,
+                                                         'samplemasses_compare': samplemasses_compare},
+                                                        orient="index").fillna(0)
         _1st_array = spectrum_table_spectra.iloc[0, :].to_numpy().astype("float")
         _2nd_array = spectrum_table_spectra.iloc[1, :].to_numpy().astype("float")
-        if self.Similarity == "Pearson":
+        if self.sim_compare == "Pearson":
             pearson = stats.pearsonr(_1st_array, _2nd_array)
             result = round((pearson[0] * 100), 2)
-        elif self.Similarity == "DOT":
+            return result
+        elif self.sim_compare == "DOT":
             result = dot(_1st_array, _2nd_array) / (norm(_1st_array) * norm(_2nd_array)) * 100
+            return result
         else:
             print("No valid method for spectral similarity. Force quit.")
             quit()
-        return result
 
     def rename_compounds(self, rename_dict: dict):
         lst_to_rename = [file for file in os.listdir(f"{self.to_rename_folder}") if file.endswith(".txt")]
@@ -121,37 +123,38 @@ class KPL_update():
 
     def run_process(self):
         if __name__ == "__main__":
-            dct = self.compare_KPLs()
+            dct = self.compare_kpls()
             self.rename_compounds(dct)
 
 
-class KPL_new(KPL_update):
-    def __init__(self, KPL="None", file_folder="data/dataset_1/merged_files", result_folder="renamed_files",
+class KPLNew:
+    def __init__(self, kpl="None", file_folder="data/dataset_1/merged_files", result_folder="renamed_files",
                  preprocess=True, sim_compare="Pearson", spectra_transform=(0.53, 1.3)):
-        if KPL != "None":
-            self.KPL = pd.read_csv(f"{KPL}", sep="\t", header=0)
-            self.KPL_name = "KPL"
+        if kpl != "None":
+            self.kpl = pd.read_csv(f"{kpl}", sep="\t", header=0)
+            self.kpl_name = "KPL"
             try:
-                self.KPL = self.KPL.drop("Unnamed: 0", axis=1)
-                print(self.KPL)
-            except:
+                self.kpl = self.kpl.drop("Unnamed: 0", axis=1)
+                print(self.kpl)
+            except KeyError:
+                print("No need to drop unnamed columns")
                 pass
         else:
-            self.KPL = pd.DataFrame(
+            self.kpl = pd.DataFrame(
                 columns=["Name", "1st Dimension Time (s)", "2nd Dimension Time (s)", "Spectrum", "Note", "Checked",
                          "Origin"])
-            self.KPL_name = "KPL"
-        self.KPL.set_index("Name").to_csv(f"{result_folder}{os.sep}{self.KPL_name}_{date.today()}.txt", sep="\t")
+            self.kpl_name = "KPL"
+        self.kpl.set_index("Name").to_csv(f"{result_folder}{os.sep}{self.kpl_name}_{date.today()}.txt", sep="\t")
         self.file_folder = file_folder
         self.result_folder = result_folder
-        self.Similarity = sim_compare
+        self.sim_compare = sim_compare
         self.Transformation = spectra_transform
         self.preprocess = preprocess
         if not os.path.isdir(f"{self.result_folder}"):
             os.makedirs(f"{self.result_folder}")
 
     def compare_rows(self):
-        if self.preprocess == True:
+        if self.preprocess:
             for file in [file for file in os.listdir(f"{self.file_folder}") if file.endswith(".txt")]:
                 print("Processing file: ", file)
                 file_to_compare = pd.read_csv(f"{self.file_folder}{os.sep}{file}", sep="\t", header=0,
@@ -165,13 +168,13 @@ class KPL_new(KPL_update):
             file_to_compare = file_to_compare[file_to_compare["2nd Dimension Time (s)"] > 1.5]
             file_to_compare.reset_index(inplace=True, drop=True)
             print(file_to_compare)
-            if self.KPL.empty:
+            if self.kpl.empty:
                 samplecompounddf = pd.DataFrame(file_to_compare.iloc[0, :]).transpose()
-                self.KPL = pd.concat([self.KPL, samplecompounddf])
-                self.KPL.at[0, "Name"] = "MX00000"
-                self.KPL["Checked"] = "False"
-                self.KPL["Note"] = samplecompounddf["Name"]
-                self.KPL["Origin"] = file
+                self.kpl = pd.concat([self.kpl, samplecompounddf])
+                self.kpl.at[0, "Name"] = "MX00000"
+                self.kpl["Checked"] = "False"
+                self.kpl["Note"] = samplecompounddf["Name"]
+                self.kpl["Origin"] = file
                 del samplecompounddf
             for row in file_to_compare.index:
                 row_spectra = file_to_compare.at[row, "Spectrum"].split(" ")
@@ -189,10 +192,10 @@ class KPL_new(KPL_update):
                 upper_band_1st = float(file_to_compare.at[row, "1st Dimension Time (s)"] + 80)
                 lower_band_2nd = float(file_to_compare.at[row, "2nd Dimension Time (s)"] - 0.9)
                 upper_band_2nd = float(file_to_compare.at[row, "2nd Dimension Time (s)"] + 0.9)
-                database_f = self.KPL[(lower_band_1st < self.KPL["1st Dimension Time (s)"]) & (
-                            self.KPL["1st Dimension Time (s)"] <= upper_band_1st)]
+                database_f = self.kpl[(lower_band_1st < self.kpl["1st Dimension Time (s)"]) & (
+                        self.kpl["1st Dimension Time (s)"] <= upper_band_1st)]
                 database_foc = database_f[(lower_band_2nd < database_f["2nd Dimension Time (s)"]) & (
-                            database_f["2nd Dimension Time (s)"] <= upper_band_2nd)]
+                        database_f["2nd Dimension Time (s)"] <= upper_band_2nd)]
                 found = False
                 if len(database_foc) > 0:
                     comp_results = {}
@@ -204,31 +207,32 @@ class KPL_new(KPL_update):
                     try:
                         file_to_compare.at[row, "Name"] = max(comp_results, key=comp_results.get)
                         print(f"MATCH FOUND - {max(comp_results, key=comp_results.get)}")
-                    except:
+                    except ValueError:
                         print("NO MATCH FOUND")
-                if found == False:
+                        pass
+                if not found:
                     try:
-                        oldname = int(self.KPL.iat[-1, 0].split("X")[1])
+                        oldname = int(self.kpl.iat[-1, 0].split("X")[1])
+                        newname = "MX" + str(int(oldname) + 1).zfill(5)
+                        samplecompounddf = pd.DataFrame(file_to_compare.iloc[row, :]).transpose()
+                        samplecompounddf["Name"] = newname
+                        self.kpl = pd.concat([self.kpl, samplecompounddf], ignore_index=True)
+                        self.kpl.at[self.kpl.index[-1], "Checked"] = "False"
+                        self.kpl.at[self.kpl.index[-1], "Note"] = file_to_compare.loc[row, "Name"]
+                        self.kpl.at[self.kpl.index[-1], "Origin"] = file
+                        file_to_compare.at[row, "Name"] = newname
                     except AttributeError:
-                        print(self.KPL)
+                        print(self.kpl)
                         quit()
-                    newname = "MX" + str(int(oldname) + 1).zfill(5)
-                    samplecompounddf = pd.DataFrame(file_to_compare.iloc[row, :]).transpose()
-                    samplecompounddf["Name"] = newname
-                    self.KPL = pd.concat([self.KPL, samplecompounddf], ignore_index=True)
-                    self.KPL.at[self.KPL.index[-1], "Checked"] = "False"
-                    self.KPL.at[self.KPL.index[-1], "Note"] = file_to_compare.loc[row, "Name"]
-                    self.KPL.at[self.KPL.index[-1], "Origin"] = file
-                    file_to_compare.at[row, "Name"] = newname
             file_to_compare = file_to_compare.set_index("Name")
             try:
                 file_to_compare.drop(["Z score 1st RT", "Z score 2nd RT", "Euclidian"], axis=1, inplace=True)
             except KeyError:
                 print("Variable names are already correct .")
-            self.KPL.to_csv(f"{self.result_folder}{os.sep}{self.KPL_name}.txt", sep="\t")
+            self.kpl.to_csv(f"{self.result_folder}{os.sep}{self.kpl_name}.txt", sep="\t")
             file_to_compare.to_csv(f"{self.result_folder}{os.sep}{file}", sep="\t")
-        self.KPL = self.KPL.set_index("Name")
-        self.KPL.to_csv(f"{self.result_folder}{os.sep}{self.KPL_name}.txt", sep="\t")
+        self.kpl = self.kpl.set_index("Name")
+        self.kpl.to_csv(f"{self.result_folder}{os.sep}{self.kpl_name}.txt", sep="\t")
 
     def merge_peak_entries(self, file, name):
         if not os.path.isdir(f"{self.file_folder}{os.sep}merged_files"):
@@ -311,14 +315,58 @@ class KPL_new(KPL_update):
         del lst_of_indexes
         return new_dataframe
 
-    def run_KPL(self):
+    def compare_spectra(self, spectrum1: dict, spectrum2: list) -> float:
+        """
+        Compares spectra of two peaks. Note that the spectra must be in basic ChromaTOF format mass:intensity separated
+        by a blank space.
+
+        Parameters
+        ----------
+        spectrum1 : dict
+                dictionary of mass:intensity of the row from central KPL
+        spectrum2 : str
+            mass:intensity format separated by a blank space
+
+        Returns
+        -------
+        float
+            The result of spectral correlation coefficient in [%].
+
+        """
+        samplemasses_compare = dict()
+        for indic2 in spectrum2:
+            key = int(float(indic2.split(":")[0]))
+            value = float(indic2.split(":")[1])
+            if key >= 31:
+                if self.Transformation[0] != 1 or self.Transformation[1] != 0:
+                    value = round((key ** self.Transformation[1]) * (value ** self.Transformation[0]), 2)
+                samplemasses_compare.update({key: value})
+            else:
+                continue
+        spectrum_table_spectra = pd.DataFrame.from_dict({'spectrum1': spectrum1,
+                                                         'samplemasses_compare': samplemasses_compare},
+                                                        orient="index").fillna(0)
+        _1st_array = spectrum_table_spectra.iloc[0, :].to_numpy().astype("float")
+        _2nd_array = spectrum_table_spectra.iloc[1, :].to_numpy().astype("float")
+        if self.sim_compare == "Pearson":
+            pearson = stats.pearsonr(_1st_array, _2nd_array)
+            result = round((pearson[0] * 100), 2)
+            return result
+        elif self.sim_compare == "DOT":
+            result = dot(_1st_array, _2nd_array) / (norm(_1st_array) * norm(_2nd_array)) * 100
+            return result
+        else:
+            print("No valid method for spectral similarity. Force quit.")
+            quit()
+
+    def run_kpl(self):
         if __name__ == "__main__":
             self.compare_rows()
 
 
 run_x = 0
 if run_x == 0:
-    x = KPL_new(preprocess=False, file_folder="D:\\Data_align\\metadata\\rasa",
-                result_folder="K:\\transfer\\rasa\\renamed").run_KPL()
+    KPLNew(preprocess=False, file_folder="D:\\Data_align\\metadata\\rasa",
+           result_folder="K:\\transfer\\rasa\\renamed").run_kpl()
 else:
-    x = KPL_update().run_process()
+    KPLUpdate().run_process()
