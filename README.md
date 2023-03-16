@@ -3,27 +3,14 @@
 This is a small package of helper functions for automation of data preparation steps during handling of chromatographic
 data.
 
+### KPL
+
+See the readme in the KPL tool folder
+
 ### Data Inputs: ### 
 
 The input data should contain columns named: "Name","Area", and "Height".
 The default separator is "\t"
-
-### KPL
-
-The KPL script creates a library of chemical compounds detected in all processed samples and renames them to the code
-names MX00000. The script takes each row of the sample separately and compares it to the already existing entries in the
-library. It searches in a searching window defined by the user and compares mass spectra of all found library hits
-to the inspected sample row. If the mass spectra similarity is higher than a threshold, script reports back a hit and
-renames the compound accordingly to the library code name. If there is no hit found, the compound is added
-to the library and gets a new code.
-
-There is a supportive class for comparing whole libraries against each other.
-
-** please note that all samples involved in this process should be aligned as much as possible.
-Alignment of samples to the different referential chromatograms or no alignment at all causes incorrect identification
-of the chemical compounds. **
-
-#### The function for the comparing of two different libraries (KPLUpdate) has not been fully tested yet.
 
 ### Matrix_gen
 

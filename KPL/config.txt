@@ -1,0 +1,4 @@
+{
+"sim_compare": "DOT",
+"transformation": [0.53, 1.3]
+}
