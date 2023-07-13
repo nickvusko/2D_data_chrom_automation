@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Script for creation of the KPL."""
+"""Script for creation of the kpl."""
 import abc
 import datetime
 import json
@@ -14,15 +14,14 @@ import helper
 
 
 class KPLAppend:
-    """Create a new KPL library."""
+    """Create a new kpl library."""
 
     def __init__(self):
-        """Initialize the KPL base class"""
+        """Initialize the kpl base class"""
         self.__core_kpl = f"{os.getcwd()}{os.sep}Core.h5"
         self.__user_kpl = f"{os.getcwd()}{os.sep}User.h5"
         self.__codename = ""
-        logging.basicConfig(filename=f"logs{os.sep}log_append_kpl_{datetime.date.today()}_"
-                                     f"{datetime.datetime.now().strftime('%H_%M_%S')}.log",
+        logging.basicConfig(filename=f"log_append_line_to_core_kpl_{datetime.date.today()}_{datetime.date.today()}.log",
                             level=logging.DEBUG,
                             format="%(asctime)s %(message)s", filemode="w"
                             )
@@ -30,7 +29,7 @@ class KPLAppend:
         self.setup_window()
         self.master.mainloop()
 
-    def add_line(self):
+    def add_line(self) -> None:
         """returns list of files for the analysis"""
         self.__core_kpl = pd.read_hdf(self.__core_kpl)
         self.__user_kpl = pd.read_hdf(self.__user_kpl)
@@ -43,33 +42,32 @@ class KPLAppend:
         logging.info(f"{self.__codename} from user's database added as {newname} into the core database.")
         print(f"{self.__codename} from user's database added as {newname} into the core database.")
 
-    def setup_window(self):
+    def setup_window(self) -> None:
         """Set up GUI window."""
-        self.master.title("Append new line to core KPL")
+        self.master.title("Append new line to core kpl")
         self.master.geometry("800x280")
         codename = tk.StringVar()
 
         # path to core lib
-        tk.Label(self.master, text="Core library:").grid(row=0, column=0, sticky="W", pady=10)
-        core_entry = tk.Entry(self.master, bg="white", width=50)
-        core_entry.insert(index=0, string=self.__core_kpl)
-        core_entry.config(state=tk.DISABLED)
-        core_entry.grid(row=0, column=1, pady=10)
+        tk.Label(self.master, text="Loaded library:").grid(row=0, column=0, sticky="W", pady=10)
+        in_entry = tk.Entry(self.master, bg="white", width=50)
+        in_entry.insert(index=0, string=self.__core_kpl)
+        in_entry.config(state=tk.DISABLED)
+        in_entry.grid(row=0, column=1, pady=10)
         in_button = tk.Button(self.master, text="Change library",
-                              command=lambda: self.get_path(core_entry))
+                              command=lambda: self.get_path(in_entry))
         in_button.grid(row=0, column=2, pady=10)
 
         # users library
-        tk.Label(self.master, text="User's library:").grid(row=1, column=0, sticky="W", pady=10)
-        user_entry = tk.Entry(self.master, bg="white", width=50)
-        user_entry.insert(index=0, string=self.__user_kpl)
-        user_entry.config(state=tk.DISABLED)
-        user_entry.grid(row=1, column=1, pady=10)
-        out_button = tk.Button(self.master, text="Change library", command=lambda: self.get_path(user_entry, False))
+        tk.Label(self.master, text="Currently set output folder:").grid(row=1, column=0, sticky="W", pady=10)
+        out_entry = tk.Entry(self.master, bg="white", width=50)
+        out_entry.insert(index=0, string=self.__user_kpl)
+        out_entry.config(state=tk.DISABLED)
+        out_entry.grid(row=1, column=1, pady=10)
+        out_button = tk.Button(self.master, text="Change output folder", command=lambda: self.get_path(out_entry, False))
         out_button.grid(row=1, column=2, pady=10)
 
-        tk.Label(self.master, text="MX codename you want to add to core KPL:")\
-            .grid(row=2, column=0, sticky="W", pady=10)
+        tk.Label(self.master, text="MX codename you want to add to core kpl:").grid(row=2, column=0, sticky="W", pady=10)
         add_entry = tk.Entry(self.master, bg="white", width=50, textvariable=codename)
         add_entry.focus_set()
         add_entry.grid(row=2, column=1, pady=10)
@@ -89,7 +87,7 @@ class KPLAppend:
         create_button.grid(row=4, column=2, pady=10)
         create_button.config(font=26)
 
-    def get_path(self, entry: tk.Entry, core: bool = True):
+    def get_path(self, entry: tk.Entry, core: bool = True) -> None:
         """Get working folders.
 
         :param entry: entry widget

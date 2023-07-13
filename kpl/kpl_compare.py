@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Script for creation of the KPL."""
+"""Script for creation of the kpl."""
 
 import datetime
 import json
@@ -17,7 +17,7 @@ class KPLCompare:
     """Update user's library."""
 
     def __init__(self):
-        """Initialize the KPL compare class"""
+        """Initialize the kpl compare class"""
         self.__main_database = pd.DataFrame()
         self.__open_kpl = f"{os.getcwd()}{os.sep}"
         self.__save_kpl = f"{os.getcwd()}{os.sep}"
@@ -35,7 +35,7 @@ class KPLCompare:
         self.setup_window()
         self.master.mainloop()
 
-    def process_files(self):
+    def process_files(self) -> None:
         """returns list of files for the analysis"""
         print(self.__open_kpl)
         self.__main_database = pd.read_hdf(self.__open_kpl)
@@ -109,9 +109,9 @@ class KPLCompare:
         top_lvl.destroy()
         self.master.destroy()
 
-    def add_new_row(self, row: int, file: str):
+    def add_new_row(self, row: int, file: str) -> None:
         """
-        Add a new line to KPL.
+        Add a new line to kpl.
 
         param file: name of the inspected chromatogram
         param row: inspected row
@@ -139,7 +139,7 @@ class KPLCompare:
         logging.info(f"New record added: {newname}.")
         print(f"New record added: {newname}.")
 
-    def update_record(self, file: str, match: int, row: int):
+    def update_record(self, file: str, match: int, row: int) -> None:
         """Update record of the database hit.
 
         param file: inspected file
@@ -168,7 +168,7 @@ class KPLCompare:
         logging.info(f"{self.__df.at[row, 'Name']} was identified as the record "
                      f"{self.__main_database.at[match, 'Codename']} ({self.__main_database.at[match, 'Name']})")
 
-    def setup_window(self):
+    def setup_window(self) -> None:
         """Set up GUI window."""
         self.master.title("Compare tool")
         self.master.geometry("600x300")
@@ -218,7 +218,7 @@ class KPLCompare:
         compare_button.grid(row=5, column=1, pady=10)
         compare_button.config(font=26)
 
-    def get_path_compare(self, entry: tk.Entry, action: str):
+    def get_path_compare(self, entry: tk.Entry, action: str) -> None:
         """Get working folders.
 
         :param entry: entry widget

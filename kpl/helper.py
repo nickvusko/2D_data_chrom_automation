@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Helper functions for KPL scripts."""
+"""Helper functions for kpl scripts."""
 import glob
 import json
 from numpy import dot
@@ -15,7 +15,7 @@ def compare_spectra(spectrum1: dict, spectrum2: dict) -> float:
     by a blank space.
 
     param spectrum1: inspected spectrum
-    param spectrum2: KPL spectrum
+    param spectrum2: kpl spectrum
     returns: float result of the similarity comparison
     """
     with open(f"{os.getcwd()}{os.sep}config.txt", 'r') as j:
@@ -60,7 +60,7 @@ def transfer_spectrum(spectrum: list, transform: bool = True, do_list: bool = Fa
     """
     Transfer spectrum from a list like representation to a dict.
 
-    param do_list: True if the values should be stored as a list - set to True when adding a new line to KPL
+    param do_list: True if the values should be stored as a list - set to True when adding a new line to kpl
     param spectrum: spectrum from the dataframe (df.at[row, "Spectra"].split(" "))
     param transform: True if data transformation should be performed
     returns: spectrum as a dict
@@ -86,7 +86,7 @@ def transfer_spectrum(spectrum: list, transform: bool = True, do_list: bool = Fa
 def transform_spectrum(spectrum: dict, do_list: bool = False) -> dict:
     """Transform spectrum.
 
-    param do_list: True if the values should be stored as a list - set to True when adding a new line to KPL
+    param do_list: True if the values should be stored as a list - set to True when adding a new line to kpl
     param spectrum: spectrum
     returns: transformed spectrum
     """
