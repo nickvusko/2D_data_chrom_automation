@@ -122,5 +122,7 @@ Training data can be acquired [here](https://doi.org/10.5281/zenodo.7307846) [3]
 ## References
 
 [1] Kim, S., et al., Compound Identification Using Partial and Semipartial Correlations for Gas Chromatography–Mass Spectrometry Data. Analytical Chemistry, 2012. 84(15): p. 6477-6487
+
 [2] Oh, C., et al., Comprehensive two-dimensional gas chromatography/time-of-flight mass spectrometry peak sorting algorithm. Journal of Chromatography A, 2008. 1179(2): p. 205-215
+
 [3] Pojmanová P, Ladislavová N. 2DGCTOF Human Skin Scent Samples Dataset. In: Zenodo, editor. 1.0 ed2022. https://doi.org/10.5281/zenodo.7307846
