@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Script for creation of the KPL."""
+"""Script for creation of the kpl."""
 import abc
 import datetime
 import json
@@ -14,10 +14,10 @@ import helper
 
 
 class KPLCreate:
-    """Create a new KPL library."""
+    """Create a new kpl library."""
 
     def __init__(self):
-        """Initialize the KPL base class"""
+        """Initialize the kpl base class"""
         self.__main_database = pd.DataFrame(columns=["Codename", "1st RT", "2nd RT", "Spectra", "Found", "Name",
                                                      "calc_1stRT", "calc_2ndRT", "calc_spectra"])
         self.__input_path = f"{os.getcwd()}{os.sep}data_kpl"
@@ -34,7 +34,7 @@ class KPLCreate:
         self.setup_window()
         self.master.mainloop()
 
-    def process_files(self):
+    def process_files(self) -> None:
         """returns list of files for the analysis"""
         top_lvl = tk.Toplevel()
         top_lvl.title("Progress tracker")
@@ -88,9 +88,9 @@ class KPLCreate:
         top_lvl.destroy()
         self.master.destroy()
 
-    def add_new_row(self, row: int, file: str):
+    def add_new_row(self, row: int, file: str) -> None:
         """
-        Add a new line to KPL.
+        Add a new line to kpl.
 
         param file: name of the inspected chromatogram
         param row: inspected row
@@ -118,7 +118,7 @@ class KPLCreate:
         logging.info(f"New record added: {newname}.")
         print(f"New record added: {newname}.")
 
-    def update_record(self, file: str, name: str, row: int):
+    def update_record(self, file: str, name: str, row: int) -> None:
         """Update record of the database hit.
 
         param file: inspected file
@@ -177,7 +177,7 @@ class KPLCreate:
         create_button.grid(row=4, column=1, pady=10)
         create_button.config(font=26)
 
-    def get_path(self, entry: tk.Entry, input_folder: bool = True):
+    def get_path(self, entry: tk.Entry, input_folder: bool = True) -> None:
         """Get working folders.
 
         :param entry: entry widget
