@@ -3,6 +3,57 @@
 This is a small package of helper functions for automation of data preparation steps during handling of chromatographic
 data.
 
+Each modul is equipped with a logger for better handling of the metasteps.
+
+# Data evaluation
+
+DE modul contains some basic functionalities for visualization and evaluation of processed data.
+
+## Visualization tools
+
+PCA should be used for high dimensional data (many variables) as an exploratory tool. For low dimensional data 
+(such as results of PCA for example), matrix plot visualization can be deployed.
+
+## Classification tools
+
+KNN and RF have similar structure of code. First, grid search method is performed on training part of dataset. 
+Once the best model is found, the best parameters are the applied for classification of the test part of dataset.
+The model is then saved as .pkl file, the overall report is logged and confusion matrix is displayed.
+
+
+# Data Processing
+
+DP modul contains some basic functionalities for ramping up speed of data processing.
+
+## Create summary table
+
+Create a summary table of all samples and all chemical compounds detected in those samples (area and height tables).
+The user can use a list of class tags to define class of each sample. They can be written manually or added via text file.
+```
+tag examples:
+    Vol1, Vol2, Vol3
+    
+valid sample file names for tagging:
+    year_date_day_Vol1_numberofobservation
+    year_date_day_Vol2_numberofobservation
+```
+
+## Create matrices
+
+Generate matrices for all files in specific folder. A diagonal matrix is generated for each origin file. 
+The summary file contains a single-row representation of all generated matrices.
+
+## Data cleaning
+
+A simple data cleaning tool. The user can set the tolerance level of zero values and split the final table to sub-tables
+defined by sample´s class.
+
+## Merge tables
+
+Merge processed tables together into one final table. The script will sort the columns ascending to their SD 
+(standard deviation) and will filter out X number of columns (defined by the user) from each file. The user can add 
+the data cleaning step (see above). The merging rule can be switched between Intersection of the files, or their Union.
+
 
 # KPL tool
 
