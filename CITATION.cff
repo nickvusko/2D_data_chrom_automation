@@ -5,7 +5,7 @@ authors:
   given-names: "Nikola"
   orcid: "https://orcid.org/0000-0001-8733-4780"
 title: "Data processing automation for human scent samples"
-version: 1.0
-doi: 10.1371/journal.pone.0283259
-date-released: 2023-03-22
-url: "https://github.com/nickvusko/Machine_learning_scent"
+version: 0.11
+doi: 10.5281/zenodo.8144255
+date-released: 2023-07-13
+url: "https://github.com/nickvusko/2D_data_chrom_automation"
